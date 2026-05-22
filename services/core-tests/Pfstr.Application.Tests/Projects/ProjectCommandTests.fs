@@ -2,6 +2,7 @@ module Pfstr.Application.Tests.Projects.ProjectCommandTests
 
 open System
 open System.Collections.Generic
+open System.Threading.Tasks
 open Xunit
 open Pfstr.Domain.Projects
 open Pfstr.Application.Projects
@@ -12,17 +13,16 @@ let private makeStub (initial: Project list) =
     let store = List<Project>(initial)
     { new IProjectRepository with
         member _.FindById id =
-            async { return store |> Seq.tryFind (fun p -> p.Id = id) }
+            Task.FromResult(store |> Seq.tryFind (fun p -> p.Id = id))
         member _.FindBySlug slug =
-            async { return store |> Seq.tryFind (fun p -> p.Slug = slug) }
+            Task.FromResult(store |> Seq.tryFind (fun p -> p.Slug = slug))
         member _.FindAll() =
-            async { return store |> Seq.toList }
+            Task.FromResult(store |> Seq.toList)
         member _.Save project =
-            async {
-                match store |> Seq.tryFindIndex (fun p -> p.Id = project.Id) with
-                | Some i -> store.[i] <- project
-                | None   -> store.Add(project)
-            } }
+            match store |> Seq.tryFindIndex (fun p -> p.Id = project.Id) with
+            | Some i -> store.[i] <- project
+            | None   -> store.Add(project)
+            Task.CompletedTask }
 
 let private unwrapOk = function Ok v -> v | Error e -> failwithf "Expected Ok but got: %A" e
 
@@ -38,7 +38,7 @@ let ``CreateProject returns ProjectId for valid command`` () =
 let ``CreateProject saves project as Draft`` () =
     let repo = makeStub []
     CreateProject.handle repo now createCmd |> Async.RunSynchronously |> ignore
-    let projects = repo.FindAll() |> Async.RunSynchronously
+    let projects = repo.FindAll().Result
     Assert.Single(projects) |> ignore
     Assert.Equal(Draft, projects[0].Status)
 
@@ -63,7 +63,7 @@ let ``PublishProject transitions Draft to Published`` () =
     let (ProjectId pid) = CreateProject.handle repo now createCmd |> Async.RunSynchronously |> unwrapOk
     let result = PublishProject.handle repo now { ProjectId = pid } |> Async.RunSynchronously
     Assert.True(Result.isOk result)
-    let projects = repo.FindAll() |> Async.RunSynchronously
+    let projects = repo.FindAll().Result
     Assert.Equal(Published, projects[0].Status)
 
 [<Fact>]
@@ -78,7 +78,7 @@ let ``ArchiveProject transitions project to Archived`` () =
     let (ProjectId pid) = CreateProject.handle repo now createCmd |> Async.RunSynchronously |> unwrapOk
     let result = ArchiveProject.handle repo now { ProjectId = pid } |> Async.RunSynchronously
     Assert.True(Result.isOk result)
-    let projects = repo.FindAll() |> Async.RunSynchronously
+    let projects = repo.FindAll().Result
     Assert.Equal(Archived, projects[0].Status)
 
 [<Fact>]

@@ -1,5 +1,6 @@
 namespace Pfstr.Application.Projects
 
+open System.Threading.Tasks
 open Pfstr.Domain.Projects
 
 type ProjectApplicationError =
@@ -9,7 +10,7 @@ type ProjectApplicationError =
     | DomainError of string
 
 type IProjectRepository =
-    abstract member FindById: ProjectId -> Async<Project option>
-    abstract member FindBySlug: Slug.T -> Async<Project option>
-    abstract member FindAll: unit -> Async<Project list>
-    abstract member Save: Project -> Async<unit>
+    abstract member FindById: ProjectId -> Task<Project option>
+    abstract member FindBySlug: Slug.T -> Task<Project option>
+    abstract member FindAll: unit -> Task<Project list>
+    abstract member Save: Project -> Task

@@ -12,12 +12,12 @@ module CreateProject =
             match Slug.create cmd.Slug with
             | Error msg -> return Error (ValidationError msg)
             | Ok slug ->
-                let! existing = repo.FindBySlug slug
+                let! existing = repo.FindBySlug slug |> Async.AwaitTask
                 match existing with
                 | Some _ -> return Error (Conflict $"Slug '{cmd.Slug}' is already taken")
                 | None ->
                     let id = ProjectId(Guid.NewGuid())
-                    do! repo.Save(Project.create id cmd.Title slug cmd.Summary now)
+                    do! repo.Save(Project.create id cmd.Title slug cmd.Summary now) |> Async.AwaitTask
                     return Ok id
         }
 
@@ -27,14 +27,14 @@ module PublishProject =
 
     let handle (repo: IProjectRepository) (now: DateTimeOffset) (cmd: Command) : Async<Result<unit, ProjectApplicationError>> =
         async {
-            let! project = repo.FindById(ProjectId cmd.ProjectId)
+            let! project = repo.FindById(ProjectId cmd.ProjectId) |> Async.AwaitTask
             match project with
             | None -> return Error (NotFound $"Project {cmd.ProjectId} not found")
             | Some p ->
                 match Project.publish now p with
-                | Error msg     -> return Error (DomainError msg)
-                | Ok published  ->
-                    do! repo.Save published
+                | Error msg    -> return Error (DomainError msg)
+                | Ok published ->
+                    do! repo.Save published |> Async.AwaitTask
                     return Ok ()
         }
 
@@ -44,13 +44,13 @@ module ArchiveProject =
 
     let handle (repo: IProjectRepository) (now: DateTimeOffset) (cmd: Command) : Async<Result<unit, ProjectApplicationError>> =
         async {
-            let! project = repo.FindById(ProjectId cmd.ProjectId)
+            let! project = repo.FindById(ProjectId cmd.ProjectId) |> Async.AwaitTask
             match project with
             | None -> return Error (NotFound $"Project {cmd.ProjectId} not found")
             | Some p ->
                 match Project.archive p with
-                | Error msg    -> return Error (DomainError msg)
-                | Ok archived  ->
-                    do! repo.Save archived
+                | Error msg   -> return Error (DomainError msg)
+                | Ok archived ->
+                    do! repo.Save archived |> Async.AwaitTask
                     return Ok ()
         }

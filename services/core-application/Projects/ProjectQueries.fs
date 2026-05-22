@@ -11,7 +11,7 @@ module GetProject =
             match Slug.create query.Slug with
             | Error msg -> return Error (ValidationError msg)
             | Ok slug ->
-                let! project = repo.FindBySlug slug
+                let! project = repo.FindBySlug slug |> Async.AwaitTask
                 match project with
                 | None   -> return Error (NotFound $"Project with slug '{query.Slug}' not found")
                 | Some p -> return Ok p
@@ -23,7 +23,7 @@ module ListProjects =
 
     let handle (repo: IProjectRepository) (query: Query) : Async<Project list> =
         async {
-            let! all = repo.FindAll()
+            let! all = repo.FindAll() |> Async.AwaitTask
             return
                 match query.Status with
                 | None        -> all
