@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Shared/Slug.fs" />
     <Compile Include="Projects/Project.fs" />
+    <Compile Include="Posts/Post.fs" />
   </ItemGroup>
 
 </Project>

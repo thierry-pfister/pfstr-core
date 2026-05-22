@@ -21,6 +21,8 @@
   <ItemGroup>
     <Compile Include="Projects/ProjectCommandTests.fs" />
     <Compile Include="Projects/ProjectQueryTests.fs" />
+    <Compile Include="Posts/PostCommandTests.fs" />
+    <Compile Include="Posts/PostQueryTests.fs" />
   </ItemGroup>
 
 </Project>

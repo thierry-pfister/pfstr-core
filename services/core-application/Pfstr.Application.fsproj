@@ -9,6 +9,9 @@
     <Compile Include="Projects/IProjectRepository.fs" />
     <Compile Include="Projects/ProjectCommands.fs" />
     <Compile Include="Projects/ProjectQueries.fs" />
+    <Compile Include="Posts/IPostRepository.fs" />
+    <Compile Include="Posts/PostCommands.fs" />
+    <Compile Include="Posts/PostQueries.fs" />
   </ItemGroup>
 
   <ItemGroup>
