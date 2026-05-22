@@ -1,6 +1,8 @@
 using FluentMigrator.Runner;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Pfstr.Api.Auth;
 using Pfstr.Application.Posts;
 using Pfstr.Application.Projects;
 using Pfstr.Infrastructure.Data;
@@ -22,6 +24,10 @@ builder.Services
     .AddLogging(lb => lb.AddFluentMigratorConsole());
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services
+    .AddAuthentication(ApiKeyAuthenticationHandler.SchemeName)
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationHandler.SchemeName, _ => { });
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
@@ -37,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
