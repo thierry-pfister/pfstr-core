@@ -62,3 +62,22 @@ let ``archive on Published project returns Archived`` () =
 let ``archive on already Archived project returns Error`` () =
     let archived = Project.archive (newProject ()) |> unwrapOk
     Assert.True(Result.isError (Project.archive archived))
+
+[<Fact>]
+let ``update changes title summary content techstack links and displayOrder`` () =
+    let links = [ { Label = "GitHub"; Url = "https://github.com" } ]
+    let updated = Project.update "New Title" "New Summary" (Some "Content") ["F#"] links 5 (newProject ())
+    Assert.Equal("New Title", updated.Title)
+    Assert.Equal("New Summary", updated.Summary)
+    Assert.Equal(Some "Content", updated.Content)
+    Assert.Equal<string list>(["F#"], updated.TechStack)
+    Assert.Equal(5, updated.DisplayOrder)
+
+[<Fact>]
+let ``update preserves id slug status and timestamps`` () =
+    let p = newProject ()
+    let updated = Project.update "New Title" "New Summary" None [] [] 0 p
+    Assert.Equal(p.Id, updated.Id)
+    Assert.Equal(Slug.value p.Slug, Slug.value updated.Slug)
+    Assert.Equal(p.Status, updated.Status)
+    Assert.Equal(p.CreatedAt, updated.CreatedAt)

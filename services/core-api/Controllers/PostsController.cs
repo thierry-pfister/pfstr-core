@@ -36,6 +36,16 @@ public class PostsController(IPostRepository repo) : ControllerBase
         return MapError(result.ErrorValue);
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] UpdatePostRequest request)
+    {
+        var content = request.Content is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Content);
+        var tags = Microsoft.FSharp.Collections.ListModule.OfSeq(request.Tags ?? new List<string>());
+        var cmd = new UpdatePost.Command(id, request.Title, request.Summary, content, tags);
+        var result = await UpdatePost.handle(repo, cmd).ToTask();
+        return result.IsOk ? NoContent() : MapError(result.ErrorValue);
+    }
+
     [HttpPost("{id:guid}/publish")]
     public async Task<ActionResult> Publish(Guid id)
     {

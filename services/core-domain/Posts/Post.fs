@@ -45,3 +45,6 @@ module Post =
         match post.Status with
         | Archived -> Error "Post is already archived"
         | _        -> Ok { post with Status = Archived }
+
+    let update (title: string) (summary: string) (content: string option) (tags: string list) (post: Post) : Post =
+        { post with Title = title; Summary = summary; Content = content; Tags = tags }

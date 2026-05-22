@@ -51,3 +51,6 @@ module Project =
         match project.Status with
         | Archived -> Error "Project is already archived"
         | _        -> Ok { project with Status = Archived }
+
+    let update (title: string) (summary: string) (content: string option) (techStack: string list) (links: ProjectLink list) (displayOrder: int) (project: Project) : Project =
+        { project with Title = title; Summary = summary; Content = content; TechStack = techStack; Links = links; DisplayOrder = displayOrder }
