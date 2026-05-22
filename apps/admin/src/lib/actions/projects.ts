@@ -1,0 +1,43 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { api } from "../api";
+
+export async function createProject(formData: FormData) {
+  const title = formData.get("title") as string;
+  const slug = formData.get("slug") as string;
+  const summary = formData.get("summary") as string;
+
+  const project = await api.projects.create({ title, slug, summary });
+  revalidatePath("/projects");
+  redirect(`/projects/${project.id}`);
+}
+
+export async function updateProject(id: string, formData: FormData) {
+  const title = formData.get("title") as string;
+  const summary = formData.get("summary") as string;
+  const content = (formData.get("content") as string) || null;
+  const techStackRaw = (formData.get("techStack") as string) || "";
+  const techStack = techStackRaw
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  const displayOrder = parseInt(formData.get("displayOrder") as string, 10) || 0;
+
+  await api.projects.update(id, { title, summary, content, techStack, links: [], displayOrder });
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${id}`);
+}
+
+export async function publishProject(id: string) {
+  await api.projects.publish(id);
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${id}`);
+}
+
+export async function archiveProject(id: string) {
+  await api.projects.archive(id);
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${id}`);
+}
