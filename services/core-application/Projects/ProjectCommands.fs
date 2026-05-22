@@ -1,6 +1,7 @@
 namespace Pfstr.Application.Projects
 
 open System
+open Pfstr.Domain
 open Pfstr.Domain.Projects
 
 module CreateProject =

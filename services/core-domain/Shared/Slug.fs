@@ -1,4 +1,4 @@
-namespace Pfstr.Domain.Projects
+namespace Pfstr.Domain
 
 module Slug =
 

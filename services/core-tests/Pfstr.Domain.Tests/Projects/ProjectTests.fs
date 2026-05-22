@@ -2,6 +2,7 @@ module Pfstr.Domain.Tests.Projects.ProjectTests
 
 open System
 open Xunit
+open Pfstr.Domain
 open Pfstr.Domain.Projects
 
 let private unwrapOk = function Ok v -> v | Error e -> failwith e

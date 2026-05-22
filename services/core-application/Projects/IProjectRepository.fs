@@ -1,6 +1,7 @@
 namespace Pfstr.Application.Projects
 
 open System.Threading.Tasks
+open Pfstr.Domain
 open Pfstr.Domain.Projects
 
 type ProjectApplicationError =

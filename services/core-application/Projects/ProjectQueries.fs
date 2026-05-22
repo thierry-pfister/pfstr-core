@@ -1,5 +1,6 @@
 namespace Pfstr.Application.Projects
 
+open Pfstr.Domain
 open Pfstr.Domain.Projects
 
 module GetProject =

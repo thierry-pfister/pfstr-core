@@ -1,6 +1,7 @@
 namespace Pfstr.Domain.Projects
 
 open System
+open Pfstr.Domain
 
 type ProjectId = ProjectId of Guid
 
