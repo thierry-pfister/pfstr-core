@@ -1,11 +1,11 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useActionState, useState } from "react";
 import { createProject } from "@/lib/actions/projects";
 import { slugify } from "@/lib/slugify";
 
 export default function NewProjectPage() {
-  const [pending, startTransition] = useTransition();
+  const [state, action, pending] = useActionState(createProject, null);
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
 
@@ -19,19 +19,10 @@ export default function NewProjectPage() {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-semibold mb-6">New project</h1>
-      <form
-        action={(fd) => startTransition(() => createProject(fd))}
-        className="flex flex-col gap-4"
-      >
+      <form action={action} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium" htmlFor="title">Title</label>
-          <input
-            id="title"
-            name="title"
-            required
-            onChange={handleTitleChange}
-            className={base}
-          />
+          <input id="title" name="title" required onChange={handleTitleChange} className={base} />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium" htmlFor="slug">Slug</label>
@@ -48,6 +39,9 @@ export default function NewProjectPage() {
           <label className="text-sm font-medium" htmlFor="summary">Summary</label>
           <textarea id="summary" name="summary" required rows={3} className={base} />
         </div>
+        {state?.error && (
+          <p className="text-sm text-red-600 dark:text-red-400" aria-live="polite">{state.error}</p>
+        )}
         <button
           type="submit"
           disabled={pending}
