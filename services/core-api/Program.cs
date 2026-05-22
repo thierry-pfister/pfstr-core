@@ -1,6 +1,8 @@
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Pfstr.Api.Auth;
 using Pfstr.Application.Posts;
@@ -29,7 +31,23 @@ builder.Services
     .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationHandler.SchemeName, _ => { });
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, ct) =>
+    {
+        var components = document.Components ?? new OpenApiComponents();
+        document.Components = components;
+        components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+        components.SecuritySchemes["ApiKey"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.ApiKey,
+            In = ParameterLocation.Header,
+            Name = "X-Api-Key",
+            Description = "API key for write operations"
+        };
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
