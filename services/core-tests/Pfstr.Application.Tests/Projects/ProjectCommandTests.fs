@@ -86,3 +86,21 @@ let ``ArchiveProject returns NotFound for unknown project`` () =
     match ArchiveProject.handle (makeStub []) now { ProjectId = Guid.NewGuid() } |> Async.RunSynchronously with
     | Error (NotFound _) -> ()
     | other -> failwithf "Expected NotFound, got %A" other
+
+let private updateCmd (pid: Guid) : UpdateProject.Command =
+    { ProjectId = pid; Title = "Updated Title"; Summary = "Updated Summary"; Content = None; TechStack = ["F#"]; Links = []; DisplayOrder = 1 }
+
+[<Fact>]
+let ``UpdateProject updates fields and saves`` () =
+    let repo = makeStub []
+    let (ProjectId pid) = CreateProject.handle repo now createCmd |> Async.RunSynchronously |> unwrapOk
+    let result = UpdateProject.handle repo (updateCmd pid) |> Async.RunSynchronously
+    Assert.True(Result.isOk result)
+    let projects = repo.FindAll().Result
+    Assert.Equal("Updated Title", projects[0].Title)
+
+[<Fact>]
+let ``UpdateProject returns NotFound for unknown project`` () =
+    match UpdateProject.handle (makeStub []) (updateCmd (Guid.NewGuid())) |> Async.RunSynchronously with
+    | Error (NotFound _) -> ()
+    | other -> failwithf "Expected NotFound, got %A" other

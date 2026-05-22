@@ -36,6 +36,20 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
         return MapError(result.ErrorValue);
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] UpdateProjectRequest request)
+    {
+        var links = request.Links.Select(l => new ProjectLink(l.Label, l.Url)).ToList();
+        var content = request.Content is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Content);
+        var techStack = request.TechStack ?? new List<string>();
+        var cmd = new UpdateProject.Command(id, request.Title, request.Summary, content,
+            Microsoft.FSharp.Collections.ListModule.OfSeq(techStack),
+            Microsoft.FSharp.Collections.ListModule.OfSeq(links),
+            request.DisplayOrder);
+        var result = await UpdateProject.handle(repo, cmd).ToTask();
+        return result.IsOk ? NoContent() : MapError(result.ErrorValue);
+    }
+
     [HttpPost("{id:guid}/publish")]
     public async Task<ActionResult> Publish(Guid id)
     {

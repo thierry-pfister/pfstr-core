@@ -55,3 +55,24 @@ module ArchivePost =
                     do! repo.Save archived |> Async.AwaitTask
                     return Ok ()
         }
+
+module UpdatePost =
+
+    type Command = {
+        PostId: Guid
+        Title: string
+        Summary: string
+        Content: string option
+        Tags: string list
+    }
+
+    let handle (repo: IPostRepository) (cmd: Command) : Async<Result<unit, PostApplicationError>> =
+        async {
+            let! post = repo.FindById(PostId cmd.PostId) |> Async.AwaitTask
+            match post with
+            | None -> return Error (NotFound $"Post {cmd.PostId} not found")
+            | Some p ->
+                let updated = Post.update cmd.Title cmd.Summary cmd.Content cmd.Tags p
+                do! repo.Save updated |> Async.AwaitTask
+                return Ok ()
+        }

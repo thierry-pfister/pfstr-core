@@ -55,3 +55,26 @@ module ArchiveProject =
                     do! repo.Save archived |> Async.AwaitTask
                     return Ok ()
         }
+
+module UpdateProject =
+
+    type Command = {
+        ProjectId: Guid
+        Title: string
+        Summary: string
+        Content: string option
+        TechStack: string list
+        Links: ProjectLink list
+        DisplayOrder: int
+    }
+
+    let handle (repo: IProjectRepository) (cmd: Command) : Async<Result<unit, ProjectApplicationError>> =
+        async {
+            let! project = repo.FindById(ProjectId cmd.ProjectId) |> Async.AwaitTask
+            match project with
+            | None -> return Error (NotFound $"Project {cmd.ProjectId} not found")
+            | Some p ->
+                let updated = Project.update cmd.Title cmd.Summary cmd.Content cmd.TechStack cmd.Links cmd.DisplayOrder p
+                do! repo.Save updated |> Async.AwaitTask
+                return Ok ()
+        }

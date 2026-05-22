@@ -86,3 +86,22 @@ let ``ArchivePost returns NotFound for unknown post`` () =
     match ArchivePost.handle (makeStub []) now { PostId = Guid.NewGuid() } |> Async.RunSynchronously with
     | Error (NotFound _) -> ()
     | other -> failwithf "Expected NotFound, got %A" other
+
+let private updateCmd (pid: Guid) : UpdatePost.Command =
+    { PostId = pid; Title = "Updated Title"; Summary = "Updated Summary"; Content = Some "Body"; Tags = ["fsharp"] }
+
+[<Fact>]
+let ``UpdatePost updates fields and saves`` () =
+    let repo = makeStub []
+    let (PostId pid) = CreatePost.handle repo now createCmd |> Async.RunSynchronously |> unwrapOk
+    let result = UpdatePost.handle repo (updateCmd pid) |> Async.RunSynchronously
+    Assert.True(Result.isOk result)
+    let posts = repo.FindAll().Result
+    Assert.Equal("Updated Title", posts[0].Title)
+    Assert.Equal(Some "Body", posts[0].Content)
+
+[<Fact>]
+let ``UpdatePost returns NotFound for unknown post`` () =
+    match UpdatePost.handle (makeStub []) (updateCmd (Guid.NewGuid())) |> Async.RunSynchronously with
+    | Error (NotFound _) -> ()
+    | other -> failwithf "Expected NotFound, got %A" other

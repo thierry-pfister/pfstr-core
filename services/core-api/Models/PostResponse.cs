@@ -15,3 +15,10 @@ public record PostResponse(
 public record CreatePostRequest(string Title, string Slug, string Summary);
 
 public record CreatePostResponse(Guid Id);
+
+public record UpdatePostRequest(
+    string Title,
+    string Summary,
+    string? Content,
+    List<string> Tags
+);

@@ -70,3 +70,20 @@ let ``archive on Published post returns Archived`` () =
 let ``archive on already Archived post returns Error`` () =
     let archived = Post.archive (newPost ()) |> unwrapOk
     Assert.True(Result.isError (Post.archive archived))
+
+[<Fact>]
+let ``update changes title summary content and tags`` () =
+    let updated = Post.update "New Title" "New Summary" (Some "Body content") ["fsharp"; "dotnet"] (newPost ())
+    Assert.Equal("New Title", updated.Title)
+    Assert.Equal("New Summary", updated.Summary)
+    Assert.Equal(Some "Body content", updated.Content)
+    Assert.Equal<string list>(["fsharp"; "dotnet"], updated.Tags)
+
+[<Fact>]
+let ``update preserves id slug status and timestamps`` () =
+    let p = newPost ()
+    let updated = Post.update "New Title" "New Summary" None [] p
+    Assert.Equal(p.Id, updated.Id)
+    Assert.Equal(Slug.value p.Slug, Slug.value updated.Slug)
+    Assert.Equal(p.Status, updated.Status)
+    Assert.Equal(p.CreatedAt, updated.CreatedAt)
