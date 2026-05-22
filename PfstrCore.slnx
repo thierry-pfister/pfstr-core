@@ -13,6 +13,7 @@
     <Project Path="services/core-infrastructure/Pfstr.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/services/core-tests/">
+    <Project Path="services/core-tests/Pfstr.Domain.Tests/Pfstr.Domain.Tests.fsproj" />
     <Project Path="services/core-tests/Pfstr.Tests.csproj" />
   </Folder>
 </Solution>
