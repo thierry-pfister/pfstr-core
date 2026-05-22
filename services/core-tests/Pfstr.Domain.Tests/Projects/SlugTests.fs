@@ -1,6 +1,7 @@
 module Pfstr.Domain.Tests.Projects.SlugTests
 
 open Xunit
+open Pfstr.Domain
 open Pfstr.Domain.Projects
 
 [<Theory>]

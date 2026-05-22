@@ -3,6 +3,7 @@ module Pfstr.Application.Tests.Projects.ProjectQueryTests
 open System
 open System.Threading.Tasks
 open Xunit
+open Pfstr.Domain
 open Pfstr.Domain.Projects
 open Pfstr.Application.Projects
 

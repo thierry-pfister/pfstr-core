@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.FSharp.Collections;
 using Microsoft.FSharp.Core;
 using Pfstr.Application.Projects;
+using Pfstr.Domain;
 using Pfstr.Domain.Projects;
 using Pfstr.Infrastructure.Data;
 

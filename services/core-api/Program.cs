@@ -1,9 +1,11 @@
 using FluentMigrator.Runner;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Pfstr.Application.Posts;
 using Pfstr.Application.Projects;
 using Pfstr.Infrastructure.Data;
 using Pfstr.Infrastructure.Migrations;
+using Pfstr.Infrastructure.Posts;
 using Pfstr.Infrastructure.Projects;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,7 @@ builder.Services
         .ScanIn(typeof(M20260101001_CreateProjectsTable).Assembly).For.Migrations())
     .AddLogging(lb => lb.AddFluentMigratorConsole());
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
