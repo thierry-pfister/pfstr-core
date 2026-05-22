@@ -1,28 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="Testcontainers.PostgreSql" Version="4.12.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\..\core-domain\Pfstr.Domain.fsproj" />
+    <ProjectReference Include="..\..\core-application\Pfstr.Application.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\core-domain\Pfstr.Domain.fsproj" />
-    <ProjectReference Include="..\core-application\Pfstr.Application.fsproj" />
-    <ProjectReference Include="..\core-infrastructure\Pfstr.Infrastructure.csproj" />
+    <Compile Include="Projects/ProjectCommandTests.fs" />
+    <Compile Include="Projects/ProjectQueryTests.fs" />
   </ItemGroup>
 
 </Project>

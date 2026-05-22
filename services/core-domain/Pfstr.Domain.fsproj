@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Projects/Slug.fs" />
+    <Compile Include="Projects/Project.fs" />
   </ItemGroup>
 
 </Project>
