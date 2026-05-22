@@ -1,22 +1,31 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { updateProject, publishProject, archiveProject } from "@/lib/actions/projects";
 import type { Project } from "@/lib/types";
 import MarkdownEditor from "./markdown-editor";
 
 export default function ProjectForm({ project }: { project: Project }) {
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   const base =
     "w-full rounded border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400";
 
+  function run(fn: () => Promise<void>) {
+    startTransition(async () => {
+      try {
+        await fn();
+        setError(null);
+      } catch {
+        setError("Action failed. Is the API running?");
+      }
+    });
+  }
+
   return (
     <div className="max-w-xl flex flex-col gap-6">
-      <form
-        action={(fd) => startTransition(() => updateProject(project.id, fd))}
-        className="flex flex-col gap-4"
-      >
+      <form action={(fd) => run(() => updateProject(project.id, fd))} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium" htmlFor="title">Title</label>
           <input id="title" name="title" defaultValue={project.title} required className={base} />
@@ -37,6 +46,9 @@ export default function ProjectForm({ project }: { project: Project }) {
           <label className="text-sm font-medium" htmlFor="displayOrder">Display order</label>
           <input id="displayOrder" name="displayOrder" type="number" defaultValue={project.displayOrder} className={base} />
         </div>
+        {error && (
+          <p className="text-sm text-red-600 dark:text-red-400" aria-live="polite">{error}</p>
+        )}
         <button
           type="submit"
           disabled={pending}
@@ -49,7 +61,7 @@ export default function ProjectForm({ project }: { project: Project }) {
       <div className="flex gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
         {project.status === "Active" && (
           <button
-            onClick={() => startTransition(() => publishProject(project.id))}
+            onClick={() => run(() => publishProject(project.id))}
             disabled={pending}
             className="rounded bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-500 disabled:opacity-50"
           >
@@ -58,7 +70,7 @@ export default function ProjectForm({ project }: { project: Project }) {
         )}
         {project.status !== "Archived" && (
           <button
-            onClick={() => startTransition(() => archiveProject(project.id))}
+            onClick={() => run(() => archiveProject(project.id))}
             disabled={pending}
             className="rounded bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-500 disabled:opacity-50"
           >
