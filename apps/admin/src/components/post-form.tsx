@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { updatePost, publishPost, archivePost } from "@/lib/actions/posts";
 import type { Post } from "@/lib/types";
+import MarkdownEditor from "./markdown-editor";
 
 export default function PostForm({ post }: { post: Post }) {
   const [pending, startTransition] = useTransition();
@@ -25,8 +26,8 @@ export default function PostForm({ post }: { post: Post }) {
           <textarea id="summary" name="summary" defaultValue={post.summary} required rows={3} className={base} />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium" htmlFor="content">Content</label>
-          <textarea id="content" name="content" defaultValue={post.content ?? ""} rows={10} className={base} />
+          <label className="text-sm font-medium">Content</label>
+          <MarkdownEditor name="content" defaultValue={post.content ?? ""} />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium" htmlFor="tags">Tags (comma-separated)</label>

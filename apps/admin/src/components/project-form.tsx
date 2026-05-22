@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { updateProject, publishProject, archiveProject } from "@/lib/actions/projects";
 import type { Project } from "@/lib/types";
+import MarkdownEditor from "./markdown-editor";
 
 export default function ProjectForm({ project }: { project: Project }) {
   const [pending, startTransition] = useTransition();
@@ -25,8 +26,8 @@ export default function ProjectForm({ project }: { project: Project }) {
           <textarea id="summary" name="summary" defaultValue={project.summary} required rows={3} className={base} />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium" htmlFor="content">Content</label>
-          <textarea id="content" name="content" defaultValue={project.content ?? ""} rows={10} className={base} />
+          <label className="text-sm font-medium">Content</label>
+          <MarkdownEditor name="content" defaultValue={project.content ?? ""} />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium" htmlFor="techStack">Tech stack (comma-separated)</label>
