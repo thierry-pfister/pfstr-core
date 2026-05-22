@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FSharp.Core;
 using Pfstr.Api.Helpers;
@@ -27,6 +28,7 @@ public class PostsController(IPostRepository repo) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<CreatePostResponse>> Create([FromBody] CreatePostRequest request)
     {
         var cmd = new CreatePost.Command(request.Title, request.Slug, request.Summary);
@@ -37,6 +39,7 @@ public class PostsController(IPostRepository repo) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize]
     public async Task<ActionResult> Update(Guid id, [FromBody] UpdatePostRequest request)
     {
         var content = request.Content is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Content);
@@ -47,6 +50,7 @@ public class PostsController(IPostRepository repo) : ControllerBase
     }
 
     [HttpPost("{id:guid}/publish")]
+    [Authorize]
     public async Task<ActionResult> Publish(Guid id)
     {
         var result = await PublishPost.handle(repo, DateTimeOffset.UtcNow, new PublishPost.Command(id)).ToTask();
@@ -54,6 +58,7 @@ public class PostsController(IPostRepository repo) : ControllerBase
     }
 
     [HttpPost("{id:guid}/archive")]
+    [Authorize]
     public async Task<ActionResult> Archive(Guid id)
     {
         var result = await ArchivePost.handle(repo, DateTimeOffset.UtcNow, new ArchivePost.Command(id)).ToTask();

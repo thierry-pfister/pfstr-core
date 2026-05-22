@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FSharp.Core;
 using Pfstr.Api.Helpers;
@@ -27,6 +28,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<CreateProjectResponse>> Create([FromBody] CreateProjectRequest request)
     {
         var cmd = new CreateProject.Command(request.Title, request.Slug, request.Summary);
@@ -37,6 +39,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize]
     public async Task<ActionResult> Update(Guid id, [FromBody] UpdateProjectRequest request)
     {
         var links = request.Links.Select(l => new ProjectLink(l.Label, l.Url)).ToList();
@@ -51,6 +54,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     }
 
     [HttpPost("{id:guid}/publish")]
+    [Authorize]
     public async Task<ActionResult> Publish(Guid id)
     {
         var result = await PublishProject.handle(repo, DateTimeOffset.UtcNow, new PublishProject.Command(id)).ToTask();
@@ -58,6 +62,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     }
 
     [HttpPost("{id:guid}/archive")]
+    [Authorize]
     public async Task<ActionResult> Archive(Guid id)
     {
         var result = await ArchiveProject.handle(repo, DateTimeOffset.UtcNow, new ArchiveProject.Command(id)).ToTask();
