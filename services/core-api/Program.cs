@@ -11,10 +11,14 @@ using Pfstr.Infrastructure.Data;
 using Pfstr.Infrastructure.Migrations;
 using Pfstr.Infrastructure.Posts;
 using Pfstr.Infrastructure.Projects;
+using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Default")!;
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
+
+builder.Services.AddStackExchangeRedisCache(options => options.Configuration = redisConnectionString);
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services
@@ -24,8 +28,12 @@ builder.Services
         .WithGlobalConnectionString(connectionString)
         .ScanIn(typeof(M20260101001_CreateProjectsTable).Assembly).For.Migrations())
     .AddLogging(lb => lb.AddFluentMigratorConsole());
-builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
-builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ProjectRepository>();
+builder.Services.AddScoped<IProjectRepository>(sp =>
+    new CachedProjectRepository(sp.GetRequiredService<ProjectRepository>(), sp.GetRequiredService<IDistributedCache>()));
+builder.Services.AddScoped<PostRepository>();
+builder.Services.AddScoped<IPostRepository>(sp =>
+    new CachedPostRepository(sp.GetRequiredService<PostRepository>(), sp.GetRequiredService<IDistributedCache>()));
 builder.Services
     .AddAuthentication(ApiKeyAuthenticationHandler.SchemeName)
     .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationHandler.SchemeName, _ => { });
