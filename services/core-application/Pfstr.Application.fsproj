@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Projects/IProjectRepository.fs" />
+    <Compile Include="Projects/ProjectCommands.fs" />
+    <Compile Include="Projects/ProjectQueries.fs" />
   </ItemGroup>
 
   <ItemGroup>
