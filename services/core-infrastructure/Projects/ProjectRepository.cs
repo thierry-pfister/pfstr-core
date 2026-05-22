@@ -5,6 +5,7 @@ using Pfstr.Application.Projects;
 using Pfstr.Domain;
 using Pfstr.Domain.Projects;
 using Pfstr.Infrastructure.Data;
+using Pfstr.Infrastructure.Data.Entities;
 
 namespace Pfstr.Infrastructure.Projects;
 
@@ -51,7 +52,13 @@ public class ProjectRepository(AppDbContext context) : IProjectRepository
         if (!exists)
             context.Projects.Add(entity);
         else
+        {
+            var tracked = context.ChangeTracker.Entries<ProjectEntity>()
+                .FirstOrDefault(e => e.Entity.Id == entity.Id);
+            if (tracked != null)
+                tracked.State = EntityState.Detached;
             context.Projects.Update(entity);
+        }
 
         await context.SaveChangesAsync();
     }

@@ -4,6 +4,7 @@ using Pfstr.Application.Posts;
 using Pfstr.Domain;
 using Pfstr.Domain.Posts;
 using Pfstr.Infrastructure.Data;
+using Pfstr.Infrastructure.Data.Entities;
 
 namespace Pfstr.Infrastructure.Posts;
 
@@ -36,10 +37,16 @@ public class PostRepository(AppDbContext context) : IPostRepository
     {
         var entity = PostMapper.ToEntity(post);
         var exists = await context.Posts.AnyAsync(p => p.Id == entity.Id);
-        if (exists)
-            context.Posts.Update(entity);
-        else
+        if (!exists)
             context.Posts.Add(entity);
+        else
+        {
+            var tracked = context.ChangeTracker.Entries<PostEntity>()
+                .FirstOrDefault(e => e.Entity.Id == entity.Id);
+            if (tracked != null)
+                tracked.State = EntityState.Detached;
+            context.Posts.Update(entity);
+        }
         await context.SaveChangesAsync();
     }
 }
