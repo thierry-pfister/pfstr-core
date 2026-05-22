@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/services/" />
+  <Folder Name="/services/core-api/">
+    <Project Path="services/core-api/Pfstr.Api.csproj" />
+  </Folder>
+  <Folder Name="/services/core-application/">
+    <Project Path="services/core-application/Pfstr.Application.fsproj" />
+  </Folder>
+  <Folder Name="/services/core-domain/">
+    <Project Path="services/core-domain/Pfstr.Domain.fsproj" />
+  </Folder>
+  <Folder Name="/services/core-infrastructure/">
+    <Project Path="services/core-infrastructure/Pfstr.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/core-tests/">
+    <Project Path="services/core-tests/Pfstr.Tests.csproj" />
+  </Folder>
+</Solution>
