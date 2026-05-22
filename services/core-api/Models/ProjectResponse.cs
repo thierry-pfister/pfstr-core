@@ -17,3 +17,5 @@ public record ProjectResponse(
 public record ProjectLinkResponse(string Label, string Url);
 
 public record CreateProjectRequest(string Title, string Slug, string Summary);
+
+public record CreateProjectResponse(Guid Id);

@@ -12,38 +12,38 @@ namespace Pfstr.Api.Controllers;
 public class ProjectsController(IProjectRepository repo) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> List([FromQuery] string? status = null)
+    public async Task<ActionResult<IEnumerable<ProjectResponse>>> List([FromQuery] string? status = null)
     {
         var projects = await ListProjects.handle(repo, new ListProjects.Query(ParseStatus(status))).ToTask();
         return Ok(projects.Select(ToResponse));
     }
 
     [HttpGet("{slug}")]
-    public async Task<IActionResult> Get(string slug)
+    public async Task<ActionResult<ProjectResponse>> Get(string slug)
     {
         var result = await GetProject.handle(repo, new GetProject.Query(slug)).ToTask();
         return result.IsOk ? Ok(ToResponse(result.ResultValue)) : MapError(result.ErrorValue);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateProjectRequest request)
+    public async Task<ActionResult<CreateProjectResponse>> Create([FromBody] CreateProjectRequest request)
     {
         var cmd = new CreateProject.Command(request.Title, request.Slug, request.Summary);
         var result = await CreateProject.handle(repo, DateTimeOffset.UtcNow, cmd).ToTask();
         if (result.IsOk)
-            return CreatedAtAction(nameof(Get), new { slug = request.Slug }, new { id = result.ResultValue.Item });
+            return CreatedAtAction(nameof(Get), new { slug = request.Slug }, new CreateProjectResponse(result.ResultValue.Item));
         return MapError(result.ErrorValue);
     }
 
     [HttpPost("{id:guid}/publish")]
-    public async Task<IActionResult> Publish(Guid id)
+    public async Task<ActionResult> Publish(Guid id)
     {
         var result = await PublishProject.handle(repo, DateTimeOffset.UtcNow, new PublishProject.Command(id)).ToTask();
         return result.IsOk ? NoContent() : MapError(result.ErrorValue);
     }
 
     [HttpPost("{id:guid}/archive")]
-    public async Task<IActionResult> Archive(Guid id)
+    public async Task<ActionResult> Archive(Guid id)
     {
         var result = await ArchiveProject.handle(repo, DateTimeOffset.UtcNow, new ArchiveProject.Command(id)).ToTask();
         return result.IsOk ? NoContent() : MapError(result.ErrorValue);
@@ -63,7 +63,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
         p.DisplayOrder
     );
 
-    private IActionResult MapError(ProjectApplicationError error) => error switch
+    private ActionResult MapError(ProjectApplicationError error) => error switch
     {
         ProjectApplicationError.ValidationError ve => BadRequest(new { error = ve.Item }),
         ProjectApplicationError.NotFound nf        => NotFound(new { error = nf.Item }),
