@@ -1,5 +1,6 @@
 using FluentMigrator.Runner;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Pfstr.Application.Projects;
 using Pfstr.Infrastructure.Data;
 using Pfstr.Infrastructure.Migrations;
@@ -27,7 +28,10 @@ using (var scope = app.Services.CreateScope())
     scope.ServiceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
 
 if (app.Environment.IsDevelopment())
+{
     app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
