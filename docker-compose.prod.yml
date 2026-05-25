@@ -10,7 +10,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__Default=Host=postgres;Database=pfstr;Username=pfstr;Password=${POSTGRES_PASSWORD}
-      - Redis__ConnectionString=redis:6379
+      - ConnectionStrings__Redis=redis:6379
+      - Authentication__ApiKey=${API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
