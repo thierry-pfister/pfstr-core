@@ -88,7 +88,7 @@ let ``ArchivePost returns NotFound for unknown post`` () =
     | other -> failwithf "Expected NotFound, got %A" other
 
 let private updateCmd (pid: Guid) : UpdatePost.Command =
-    { PostId = pid; Title = "Updated Title"; Summary = "Updated Summary"; Content = Some "Body"; Tags = ["fsharp"] }
+    { PostId = pid; Title = "Updated Title"; Summary = "Updated Summary"; Subtitle = None; Content = Some "Body"; CoverImage = None; CanonicalUrl = None; Tags = ["fsharp"] }
 
 [<Fact>]
 let ``UpdatePost updates fields and saves`` () =

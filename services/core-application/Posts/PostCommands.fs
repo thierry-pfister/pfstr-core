@@ -62,7 +62,10 @@ module UpdatePost =
         PostId: Guid
         Title: string
         Summary: string
+        Subtitle: string option
         Content: string option
+        CoverImage: string option
+        CanonicalUrl: string option
         Tags: string list
     }
 
@@ -72,7 +75,7 @@ module UpdatePost =
             match post with
             | None -> return Error (NotFound $"Post {cmd.PostId} not found")
             | Some p ->
-                let updated = Post.update cmd.Title cmd.Summary cmd.Content cmd.Tags p
+                let updated = Post.update cmd.Title cmd.Summary cmd.Subtitle cmd.Content cmd.CoverImage cmd.CanonicalUrl cmd.Tags p
                 do! repo.Save updated |> Async.AwaitTask
                 return Ok ()
         }

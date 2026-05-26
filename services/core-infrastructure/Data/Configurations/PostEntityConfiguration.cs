@@ -18,7 +18,11 @@ public class PostEntityConfiguration : IEntityTypeConfiguration<PostEntity>
         builder.Property(p => p.Title).HasColumnName("title").IsRequired();
         builder.Property(p => p.Slug).HasColumnName("slug").IsRequired().HasMaxLength(100);
         builder.Property(p => p.Summary).HasColumnName("summary").IsRequired();
+        builder.Property(p => p.Subtitle).HasColumnName("subtitle");
         builder.Property(p => p.Content).HasColumnName("content");
+        builder.Property(p => p.CoverImage).HasColumnName("cover_image");
+        builder.Property(p => p.CanonicalUrl).HasColumnName("canonical_url");
+        builder.Property(p => p.ReadingMinutes).HasColumnName("reading_minutes");
         builder.Property(p => p.Status).HasColumnName("status").IsRequired().HasMaxLength(20);
         builder.Property(p => p.CreatedAt).HasColumnName("created_at");
         builder.Property(p => p.PublishedAt).HasColumnName("published_at");

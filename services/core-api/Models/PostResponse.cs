@@ -5,7 +5,11 @@ public record PostResponse(
     string Title,
     string Slug,
     string Summary,
+    string? Subtitle,
     string? Content,
+    string? CoverImage,
+    string? CanonicalUrl,
+    int? ReadingMinutes,
     string Status,
     List<string> Tags,
     DateTimeOffset CreatedAt,
@@ -19,6 +23,9 @@ public record CreatePostResponse(Guid Id);
 public record UpdatePostRequest(
     string Title,
     string Summary,
+    string? Subtitle,
     string? Content,
+    string? CoverImage,
+    string? CanonicalUrl,
     List<string> Tags
 );

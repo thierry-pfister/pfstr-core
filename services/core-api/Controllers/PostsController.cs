@@ -42,9 +42,12 @@ public class PostsController(IPostRepository repo) : ControllerBase
     [Authorize]
     public async Task<ActionResult> Update(Guid id, [FromBody] UpdatePostRequest request)
     {
-        var content = request.Content is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Content);
+        var subtitle    = request.Subtitle    is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Subtitle);
+        var content     = request.Content     is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Content);
+        var coverImage  = request.CoverImage  is null ? FSharpOption<string>.None : new FSharpOption<string>(request.CoverImage);
+        var canonicalUrl = request.CanonicalUrl is null ? FSharpOption<string>.None : new FSharpOption<string>(request.CanonicalUrl);
         var tags = Microsoft.FSharp.Collections.ListModule.OfSeq(request.Tags ?? new List<string>());
-        var cmd = new UpdatePost.Command(id, request.Title, request.Summary, content, tags);
+        var cmd = new UpdatePost.Command(id, request.Title, request.Summary, subtitle, content, coverImage, canonicalUrl, tags);
         var result = await UpdatePost.handle(repo, cmd).ToTask();
         return result.IsOk ? NoContent() : MapError(result.ErrorValue);
     }
@@ -70,11 +73,15 @@ public class PostsController(IPostRepository repo) : ControllerBase
         p.Title,
         Slug.value(p.Slug),
         p.Summary,
-        p.Content is null ? null : p.Content.Value,
+        p.Subtitle     is null ? null : p.Subtitle.Value,
+        p.Content      is null ? null : p.Content.Value,
+        p.CoverImage   is null ? null : p.CoverImage.Value,
+        p.CanonicalUrl is null ? null : p.CanonicalUrl.Value,
+        p.ReadingMinutes is null ? null : p.ReadingMinutes.Value,
         p.Status.ToString(),
         p.Tags.ToList(),
         p.CreatedAt,
-        p.PublishedAt is null ? null : p.PublishedAt.Value
+        p.PublishedAt  is null ? null : p.PublishedAt.Value
     );
 
     private ActionResult MapError(PostApplicationError error) => error switch
