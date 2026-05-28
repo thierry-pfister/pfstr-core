@@ -8,6 +8,7 @@ import MarkdownEditor from "./markdown-editor";
 export default function ProjectForm({ project }: { project: Project }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string>(project.coverImageUrl ?? "");
 
   const base =
     "w-full rounded border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400";
@@ -37,6 +38,22 @@ export default function ProjectForm({ project }: { project: Project }) {
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium">Content</label>
           <MarkdownEditor name="content" defaultValue={project.content ?? ""} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium" htmlFor="coverImageUrl">Cover image URL</label>
+          <input
+            id="coverImageUrl"
+            name="coverImageUrl"
+            type="url"
+            defaultValue={project.coverImageUrl ?? ""}
+            placeholder="https://…"
+            className={base}
+            onChange={(e) => setCoverPreview(e.target.value)}
+          />
+          {coverPreview && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={coverPreview} alt="Cover preview" className="mt-1 h-32 w-full rounded object-cover border border-zinc-200 dark:border-zinc-700" />
+          )}
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium" htmlFor="techStack">Tech stack (comma-separated)</label>

@@ -26,11 +26,12 @@ export async function updateProject(id: string, formData: FormData): Promise<voi
   const title = formData.get("title") as string;
   const summary = formData.get("summary") as string;
   const content = (formData.get("content") as string) || null;
+  const coverImageUrl = (formData.get("coverImageUrl") as string) || null;
   const techStackRaw = (formData.get("techStack") as string) || "";
   const techStack = techStackRaw.split(",").map((t) => t.trim()).filter(Boolean);
   const displayOrder = parseInt(formData.get("displayOrder") as string, 10) || 0;
 
-  await api.projects.update(id, { title, summary, content, techStack, links: [], displayOrder });
+  await api.projects.update(id, { title, summary, content, coverImageUrl, techStack, links: [], displayOrder });
   revalidatePath("/projects");
   revalidatePath(`/projects/${id}`);
 }

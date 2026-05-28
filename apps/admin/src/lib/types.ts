@@ -24,6 +24,7 @@ export type Project = {
   slug: string;
   summary: string;
   content: string | null;
+  coverImageUrl: string | null;
   status: ProjectStatus;
   techStack: string[];
   links: ProjectLink[];

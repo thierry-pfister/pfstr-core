@@ -61,6 +61,7 @@ export const api = {
         title: string;
         summary: string;
         content: string | null;
+        coverImageUrl: string | null;
         techStack: string[];
         links: { label: string; url: string }[];
         displayOrder: number;
