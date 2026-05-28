@@ -19,6 +19,7 @@ public class ProjectEntityConfiguration : IEntityTypeConfiguration<ProjectEntity
         builder.Property(p => p.Slug).HasColumnName("slug").IsRequired().HasMaxLength(100);
         builder.Property(p => p.Summary).HasColumnName("summary").IsRequired();
         builder.Property(p => p.Content).HasColumnName("content");
+        builder.Property(p => p.CoverImageUrl).HasColumnName("cover_image_url");
         builder.Property(p => p.Status).HasColumnName("status").IsRequired().HasMaxLength(20);
         builder.Property(p => p.CreatedAt).HasColumnName("created_at");
         builder.Property(p => p.PublishedAt).HasColumnName("published_at");

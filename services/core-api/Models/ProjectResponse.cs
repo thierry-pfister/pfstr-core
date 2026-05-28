@@ -6,6 +6,7 @@ public record ProjectResponse(
     string Slug,
     string Summary,
     string? Content,
+    string? CoverImageUrl,
     string Status,
     List<string> TechStack,
     List<ProjectLinkResponse> Links,
@@ -24,6 +25,7 @@ public record UpdateProjectRequest(
     string Title,
     string Summary,
     string? Content,
+    string? CoverImageUrl,
     List<string> TechStack,
     List<ProjectLinkRequest> Links,
     int DisplayOrder

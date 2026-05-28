@@ -25,6 +25,9 @@ internal static class ProjectMapper
             ParseStatus(entity.Status),
             ListModule.OfSeq(entity.TechStack),
             ListModule.OfSeq(entity.Links.Select(l => new ProjectLink(l.Label, l.Url))),
+            entity.CoverImageUrl is null
+                ? FSharpOption<string>.None
+                : new FSharpOption<string>(entity.CoverImageUrl),
             entity.CreatedAt,
             entity.PublishedAt is null
                 ? FSharpOption<DateTimeOffset>.None
@@ -40,6 +43,7 @@ internal static class ProjectMapper
         Slug = Slug.value(project.Slug),
         Summary = project.Summary,
         Content = project.Content is null ? null : project.Content.Value,
+        CoverImageUrl = project.CoverImageUrl is null ? null : project.CoverImageUrl.Value,
         Status = FormatStatus(project.Status),
         TechStack = project.TechStack.ToList(),
         Links = project.Links.Select(l => new ProjectLinkDto(l.Label, l.Url)).ToList(),

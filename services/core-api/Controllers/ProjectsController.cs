@@ -44,10 +44,12 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     {
         var links = request.Links.Select(l => new ProjectLink(l.Label, l.Url)).ToList();
         var content = request.Content is null ? FSharpOption<string>.None : new FSharpOption<string>(request.Content);
+        var coverImageUrl = request.CoverImageUrl is null ? FSharpOption<string>.None : new FSharpOption<string>(request.CoverImageUrl);
         var techStack = request.TechStack ?? new List<string>();
         var cmd = new UpdateProject.Command(id, request.Title, request.Summary, content,
             Microsoft.FSharp.Collections.ListModule.OfSeq(techStack),
             Microsoft.FSharp.Collections.ListModule.OfSeq(links),
+            coverImageUrl,
             request.DisplayOrder);
         var result = await UpdateProject.handle(repo, cmd).ToTask();
         return result.IsOk ? NoContent() : MapError(result.ErrorValue);
@@ -75,6 +77,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
         Slug.value(p.Slug),
         p.Summary,
         p.Content is null ? null : p.Content.Value,
+        p.CoverImageUrl is null ? null : p.CoverImageUrl.Value,
         p.Status.ToString(),
         p.TechStack.ToList(),
         p.Links.Select(l => new ProjectLinkResponse(l.Label, l.Url)).ToList(),

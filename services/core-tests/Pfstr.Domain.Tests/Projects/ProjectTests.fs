@@ -64,20 +64,31 @@ let ``archive on already Archived project returns Error`` () =
     Assert.True(Result.isError (Project.archive archived))
 
 [<Fact>]
-let ``update changes title summary content techstack links and displayOrder`` () =
+let ``update changes title summary content techstack links coverImageUrl and displayOrder`` () =
     let links = [ { Label = "GitHub"; Url = "https://github.com" } ]
-    let updated = Project.update "New Title" "New Summary" (Some "Content") ["F#"] links 5 (newProject ())
+    let updated = Project.update "New Title" "New Summary" (Some "Content") ["F#"] links (Some "https://example.com/img.png") 5 (newProject ())
     Assert.Equal("New Title", updated.Title)
     Assert.Equal("New Summary", updated.Summary)
     Assert.Equal(Some "Content", updated.Content)
     Assert.Equal<string list>(["F#"], updated.TechStack)
+    Assert.Equal(Some "https://example.com/img.png", updated.CoverImageUrl)
     Assert.Equal(5, updated.DisplayOrder)
+
+[<Fact>]
+let ``update clears coverImageUrl when None is passed`` () =
+    let withImage = Project.update "T" "S" None [] [] (Some "https://example.com/img.png") 0 (newProject ())
+    let cleared = Project.update "T" "S" None [] [] None 0 withImage
+    Assert.True(cleared.CoverImageUrl.IsNone)
 
 [<Fact>]
 let ``update preserves id slug status and timestamps`` () =
     let p = newProject ()
-    let updated = Project.update "New Title" "New Summary" None [] [] 0 p
+    let updated = Project.update "New Title" "New Summary" None [] [] None 0 p
     Assert.Equal(p.Id, updated.Id)
     Assert.Equal(Slug.value p.Slug, Slug.value updated.Slug)
     Assert.Equal(p.Status, updated.Status)
     Assert.Equal(p.CreatedAt, updated.CreatedAt)
+
+[<Fact>]
+let ``create sets CoverImageUrl to None`` () =
+    Assert.True((newProject ()).CoverImageUrl.IsNone)

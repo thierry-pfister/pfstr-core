@@ -7,6 +7,7 @@ public class ProjectEntity
     public string Slug { get; set; } = "";
     public string Summary { get; set; } = "";
     public string? Content { get; set; }
+    public string? CoverImageUrl { get; set; }
     public string Status { get; set; } = "Draft";
     public List<string> TechStack { get; set; } = [];
     public List<ProjectLinkDto> Links { get; set; } = [];

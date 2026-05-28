@@ -88,7 +88,7 @@ let ``ArchiveProject returns NotFound for unknown project`` () =
     | other -> failwithf "Expected NotFound, got %A" other
 
 let private updateCmd (pid: Guid) : UpdateProject.Command =
-    { ProjectId = pid; Title = "Updated Title"; Summary = "Updated Summary"; Content = None; TechStack = ["F#"]; Links = []; DisplayOrder = 1 }
+    { ProjectId = pid; Title = "Updated Title"; Summary = "Updated Summary"; Content = None; TechStack = ["F#"]; Links = []; CoverImageUrl = None; DisplayOrder = 1 }
 
 [<Fact>]
 let ``UpdateProject updates fields and saves`` () =

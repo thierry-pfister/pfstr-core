@@ -21,6 +21,7 @@ type Project = {
     Status: ProjectStatus
     TechStack: string list
     Links: ProjectLink list
+    CoverImageUrl: string option
     CreatedAt: DateTimeOffset
     PublishedAt: DateTimeOffset option
     DisplayOrder: int
@@ -37,6 +38,7 @@ module Project =
           Status = Draft
           TechStack = []
           Links = []
+          CoverImageUrl = None
           CreatedAt = now
           PublishedAt = None
           DisplayOrder = 0 }
@@ -52,5 +54,5 @@ module Project =
         | Archived -> Error "Project is already archived"
         | _        -> Ok { project with Status = Archived }
 
-    let update (title: string) (summary: string) (content: string option) (techStack: string list) (links: ProjectLink list) (displayOrder: int) (project: Project) : Project =
-        { project with Title = title; Summary = summary; Content = content; TechStack = techStack; Links = links; DisplayOrder = displayOrder }
+    let update (title: string) (summary: string) (content: string option) (techStack: string list) (links: ProjectLink list) (coverImageUrl: string option) (displayOrder: int) (project: Project) : Project =
+        { project with Title = title; Summary = summary; Content = content; TechStack = techStack; Links = links; CoverImageUrl = coverImageUrl; DisplayOrder = displayOrder }

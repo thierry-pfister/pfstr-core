@@ -65,6 +65,7 @@ module UpdateProject =
         Content: string option
         TechStack: string list
         Links: ProjectLink list
+        CoverImageUrl: string option
         DisplayOrder: int
     }
 
@@ -74,7 +75,7 @@ module UpdateProject =
             match project with
             | None -> return Error (NotFound $"Project {cmd.ProjectId} not found")
             | Some p ->
-                let updated = Project.update cmd.Title cmd.Summary cmd.Content cmd.TechStack cmd.Links cmd.DisplayOrder p
+                let updated = Project.update cmd.Title cmd.Summary cmd.Content cmd.TechStack cmd.Links cmd.CoverImageUrl cmd.DisplayOrder p
                 do! repo.Save updated |> Async.AwaitTask
                 return Ok ()
         }
