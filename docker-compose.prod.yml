@@ -12,6 +12,8 @@ services:
       - ConnectionStrings__Default=Host=postgres;Database=pfstr;Username=pfstr;Password=${POSTGRES_PASSWORD}
       - ConnectionStrings__Redis=redis:6379
       - Authentication__ApiKey=${API_KEY}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,3 +77,4 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  uploads_data:

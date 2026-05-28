@@ -2,6 +2,8 @@ using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Pfstr.Api.Auth;
@@ -11,7 +13,6 @@ using Pfstr.Infrastructure.Data;
 using Pfstr.Infrastructure.Migrations;
 using Pfstr.Infrastructure.Posts;
 using Pfstr.Infrastructure.Projects;
-using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +68,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+var uploadsPath = app.Configuration["Uploads:Path"] ?? Path.Combine(AppContext.BaseDirectory, "uploads");
+Directory.CreateDirectory(uploadsPath);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/static/assets",
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=31536000,immutable";
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

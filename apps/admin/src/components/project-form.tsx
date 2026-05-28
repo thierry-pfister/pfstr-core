@@ -8,7 +8,28 @@ import MarkdownEditor from "./markdown-editor";
 export default function ProjectForm({ project }: { project: Project }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string>(project.coverImageUrl ?? "");
+  const [coverUrl, setCoverUrl] = useState<string>(project.coverImageUrl ?? "");
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) throw new Error(await res.text());
+      const { url } = (await res.json()) as { url: string };
+      setCoverUrl(url);
+    } catch {
+      setError("Upload failed.");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }
 
   const base =
     "w-full rounded border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400";
@@ -40,19 +61,31 @@ export default function ProjectForm({ project }: { project: Project }) {
           <MarkdownEditor name="content" defaultValue={project.content ?? ""} />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium" htmlFor="coverImageUrl">Cover image URL</label>
-          <input
-            id="coverImageUrl"
-            name="coverImageUrl"
-            type="url"
-            defaultValue={project.coverImageUrl ?? ""}
-            placeholder="https://…"
-            className={base}
-            onChange={(e) => setCoverPreview(e.target.value)}
-          />
-          {coverPreview && (
+          <label className="text-sm font-medium" htmlFor="coverImageUrl">Cover image</label>
+          <div className="flex gap-2">
+            <input
+              id="coverImageUrl"
+              name="coverImageUrl"
+              type="url"
+              value={coverUrl}
+              onChange={(e) => setCoverUrl(e.target.value)}
+              placeholder="https://… or upload →"
+              className={`${base} flex-1`}
+            />
+            <label className={`cursor-pointer rounded border border-zinc-200 dark:border-zinc-700 px-3 py-2 text-sm whitespace-nowrap hover:bg-zinc-50 dark:hover:bg-zinc-800 ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+              {uploading ? "Uploading…" : "Upload"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                className="sr-only"
+                onChange={handleFileUpload}
+                disabled={uploading || pending}
+              />
+            </label>
+          </div>
+          {coverUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverPreview} alt="Cover preview" className="mt-1 h-32 w-full rounded object-cover border border-zinc-200 dark:border-zinc-700" />
+            <img src={coverUrl} alt="Cover preview" className="mt-1 h-32 w-full rounded object-cover border border-zinc-200 dark:border-zinc-700" />
           )}
         </div>
         <div className="flex flex-col gap-1">
