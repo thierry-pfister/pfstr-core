@@ -14,8 +14,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: text }, { status: res.status });
   }
 
-  // pfstr-core builds the full browser-reachable URL using its Uploads:BaseUrl config.
-  // The admin proxy just passes it through unchanged.
-  const data = await res.json();
-  return NextResponse.json(data);
+  const { url } = (await res.json()) as { url: string };
+  // NEXT_PUBLIC_API_URL is baked into the image at build time — guaranteed available.
+  // API_BASE_URL is the internal Docker address used for server-to-server calls only.
+  const publicBase = process.env.NEXT_PUBLIC_API_URL || process.env.API_BASE_URL;
+  return NextResponse.json({ url: `${publicBase}${url}` });
 }
