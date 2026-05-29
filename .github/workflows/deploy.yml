@@ -17,4 +17,4 @@ jobs:
           PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
         run: |
           docker compose -f docker-compose.prod.yml build
-          docker compose -f docker-compose.prod.yml up -d
+          docker compose -f docker-compose.prod.yml up -d --force-recreate api admin
