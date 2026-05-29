@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: docker/admin.Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${PUBLIC_API_URL}
+        - NEXT_PUBLIC_API_URL=http://192.168.1.111:8080
     container_name: pfstr-admin
     restart: unless-stopped
     ports:
@@ -35,6 +35,7 @@ services:
     environment:
       - NODE_ENV=production
       - API_BASE_URL=http://pfstr-api:8080
+      - NEXT_PUBLIC_API_URL=http://192.168.1.111:8080
       - API_KEY=${API_KEY}
     depends_on:
       - api
