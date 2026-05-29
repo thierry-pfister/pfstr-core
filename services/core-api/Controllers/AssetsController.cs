@@ -35,6 +35,10 @@ public class AssetsController(IConfiguration config) : ControllerBase
         await using var stream = System.IO.File.Create(Path.Combine(uploadsPath, filename));
         await file.CopyToAsync(stream);
 
-        return Ok(new AssetResponse($"/static/assets/{filename}"));
+        // Use configured base URL so the returned URL is browser-reachable.
+        // Falls back to the incoming request's scheme+host when not configured.
+        var baseUrl = config["Uploads:BaseUrl"]
+            ?? $"{Request.Scheme}://{Request.Host}";
+        return Ok(new AssetResponse($"{baseUrl}/static/assets/{filename}"));
     }
 }
