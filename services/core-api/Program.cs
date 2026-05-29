@@ -69,7 +69,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-var uploadsPath = app.Configuration["Uploads:Path"] ?? Path.Combine(AppContext.BaseDirectory, "uploads");
+var uploadsPath = Path.GetFullPath(
+    app.Configuration["Uploads:Path"] ?? Path.Combine(AppContext.BaseDirectory, "uploads"));
 Directory.CreateDirectory(uploadsPath);
 app.UseStaticFiles(new StaticFileOptions
 {

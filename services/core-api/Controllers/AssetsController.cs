@@ -27,7 +27,8 @@ public class AssetsController(IConfiguration config) : ControllerBase
         if (!AllowedExtensions.Contains(ext))
             return BadRequest(new { error = "Unsupported file extension" });
 
-        var uploadsPath = config["Uploads:Path"] ?? Path.Combine(AppContext.BaseDirectory, "uploads");
+        var uploadsPath = Path.GetFullPath(
+            config["Uploads:Path"] ?? Path.Combine(AppContext.BaseDirectory, "uploads"));
         Directory.CreateDirectory(uploadsPath);
 
         var filename = $"{Guid.NewGuid()}{ext}";
