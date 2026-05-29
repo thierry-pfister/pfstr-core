@@ -1,5 +1,5 @@
 export type PostStatus = "Draft" | "Published" | "Archived";
-export type ProjectStatus = "Active" | "Archived";
+export type ProjectStatus = "Draft" | "Published" | "Archived";
 
 export type ProjectLink = {
   label: string;

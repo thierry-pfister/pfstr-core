@@ -109,7 +109,7 @@ export default function ProjectForm({ project }: { project: Project }) {
       </form>
 
       <div className="flex gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-        {project.status === "Active" && (
+        {project.status === "Draft" && (
           <button
             onClick={() => run(() => publishProject(project.id))}
             disabled={pending}
